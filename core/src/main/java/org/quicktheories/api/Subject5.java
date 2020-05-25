@@ -3,8 +3,7 @@ package org.quicktheories.api;
 /**
  * The state for a theory involving five values
  *
- * @param
- *          <P>
+ * @param <P>
  *          Type of first value
  * @param <P2>
  *          Type of second value
@@ -23,7 +22,7 @@ public interface Subject5<P, P2, P3, P4, T> {
    * @param property
    *          property to check
    */
-  public void check(final Predicate5<P, P2, P3, P4, T> property);
+  void check(final Predicate5<P, P2, P3, P4, T> property);
 
   /**
    * Checks a property across a random sample of possible values where
@@ -32,6 +31,6 @@ public interface Subject5<P, P2, P3, P4, T> {
    * @param property
    *          property to check
    */
-  public void checkAssert(final Consumer5<P, P2, P3, P4, T> property);
+  void checkAssert(final Consumer5<P, P2, P3, P4, T> property);
 
 }

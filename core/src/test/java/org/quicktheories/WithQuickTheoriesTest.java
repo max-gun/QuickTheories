@@ -2,9 +2,9 @@ package org.quicktheories;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 
 import java.util.Arrays;
@@ -115,7 +115,7 @@ public class WithQuickTheoriesTest {
       .forAll(testee.integers().all())
       .check(i -> false);
     
-    Mockito.verify(r).falisification(anyLong(), anyInt(), any(), any(), any());
+    Mockito.verify(r).falsification(anyLong(), anyInt(), any(), any(), any());
   }
   
   @Test

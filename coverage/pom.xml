@@ -5,13 +5,13 @@
 	<parent>
 		<artifactId>quicktheories-parent</artifactId>
 		<groupId>org.quicktheories</groupId>
-		<version>0.26-SNAPSHOT</version>
+		<version>0.27-SNAPSHOT</version>
 	</parent>
 	<artifactId>coverage</artifactId>
 	<name>coverage</name>
 	
 	<properties>
-	  <asm.version>6.0</asm.version>
+	  <asm.version>7.1</asm.version>
 	</properties>
 
 	<dependencies>
@@ -53,7 +53,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.20.1</version>
+				<version>2.22.1</version>
 				<executions>
 					<execution>
 						<goals>

@@ -1,10 +1,14 @@
 package org.quicktheories.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.assertj.core.api.AbstractAssert;
+import org.quicktheories.api.Pair;
 import org.quicktheories.core.Configuration;
 import org.quicktheories.core.Gen;
 import org.quicktheories.core.Strategy;
@@ -58,8 +62,9 @@ public class GenAssert<T>
   public final GenAssert<T> generatesAllOf(T... ts) {
     return generatesAllOfWithNSamples(1000, ts);
   }
-  
-  public GenAssert<T> generatesAllOfWithNSamples(int samples, @SuppressWarnings("unchecked") T... ts) {
+
+  @SafeVarargs
+  public final GenAssert<T> generatesAllOfWithNSamples(int samples, @SuppressWarnings("unchecked") T... ts) {
     List<T> generated = generateValues(samples);
     org.assertj.core.api.Assertions.assertThat(generated).contains(ts);
     return this;
@@ -76,12 +81,31 @@ public class GenAssert<T>
     return this;
   }
 
+  @SafeVarargs
+  public final GenAssert<T> generatesInProportion(Pair<T,Double>... wts) {
+    return generatesInProportion(1000, 0.05, wts);
+  }
+
+  @SafeVarargs
+  public final GenAssert<T> generatesInProportion(int samples, double errorThresh,
+                                                  @SuppressWarnings("unchecked") Pair<T,Double>... wts) {
+    List<T> generated = generateValues(samples);
+    Map<T, Long> counted = generated.stream()
+        .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+    Arrays.stream(wts).forEach(wt ->
+        org.assertj.core.api.Assertions.assertThat((wt._2))
+            .isCloseTo(counted.get(wt._1).doubleValue() / samples,
+                org.assertj.core.api.Assertions.within(errorThresh)));
+    return this;
+  }
+
   private List<T> generateValues(int count) {
     isNotNull();
     return generateValues(actual,count);
   }
 
-  public GenAssert<T> doesNotGenerate(
+  @SafeVarargs
+  public final GenAssert<T> doesNotGenerate(
       @SuppressWarnings("unchecked") T... ts) {
     List<T> generated = generateValues(100);
     org.assertj.core.api.Assertions.assertThat(generated).doesNotContain(ts);

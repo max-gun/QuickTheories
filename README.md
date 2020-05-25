@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ncredinburgh/QuickTheories.svg)](https://travis-ci.org/ncredinburgh/QuickTheories)
+[![Build Status](https://dev.azure.com/henrycoles/quicktheories/_apis/build/status/quicktheories.QuickTheories?branchName=master)](https://dev.azure.com/henrycoles/quicktheories/_build/latest?definitionId=2&branchName=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.quicktheories/quicktheories/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.quicktheories/quicktheories)
 
 # QuickTheories
@@ -340,6 +340,57 @@ e.g.
 ```
 
 Gens provide a number of methods that allows them to be mapped to different types or combined with other Gens. All these operations preserve assumptions and allow the resulting types to be shrunk without the need for any additional code.
+	
+## Profiles
+
+Often its desirable to re-use configurations across multiple properties without duplication and to be
+able to control which configurations are used in different environments. This can be accomplished by 
+using profiles. Profiles are named configurations that are scoped to a given Java class. They can be
+shared across test classes or be local to a JUnit test class. Setting the profile to use is done through
+ the `QT_PROFILE` system property. If no profile is set, the default profile is used. 
+
+To define a profile, register it:
+```java
+import org.quicktheories.core.Profile;
+public class SomeTests implements WithQuickTheories {
+    static {
+        Profile.registerProfile(SomeTests.class, "ci", s -> s.withExamples(10000));
+        Profile.registerProfile(SomeTests.class, "dev", s -> s.withExamples(10));
+    }
+}
+``` 
+
+For each class with registered profiles, a default profile can also be registered 
+(otherwise the QuickTheories defaults are used). The default profile can also be
+explicitly selected with `-DQT_PROFILE=default`:
+
+```java
+Profile.registerDefaultProfile(SomeTests.class, s -> s.withExamples(10));
+```
+
+
+Properties must opt-in to using profiles using `withRegisteredProfiles`:
+```java
+@Test
+public void someProperty() {
+    qt().withRegisteredProfiles(SomeTests.class)
+        .forAll(...)
+        .check(...)
+}
+```
+
+An explicit profile can also be set:
+```java
+@Test
+public void someProperty() {
+    qt().withProfile(SomeTests.class, "ci")
+        .forAll(...)
+        .check(...)
+}
+```
+
+Any configuration changes made after the call to `withProfile` or `withRegisteredProfiles` will take
+precedence over values set in the profile. 
 	
 ## Modifying the falsification output
 

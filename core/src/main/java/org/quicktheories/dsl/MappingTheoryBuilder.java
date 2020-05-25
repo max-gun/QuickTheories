@@ -15,8 +15,7 @@ import org.quicktheories.impl.TheoryRunner;
  * Builds theories about values of type T based on values of precursor types P
  * and a mapping function.
  *
- * @param
- *          <P>
+ * @param <P>
  *          Precursor type from which T will be built
  * @param <T>
  *          Final type of value required to theory
@@ -44,7 +43,7 @@ class MappingTheoryBuilder<P, T> implements Subject1<T> {
    *          property to check
    */
   public final void check(final Predicate<T> property) {
-    final TheoryRunner<P, T> qc = new TheoryRunner<>(this.state.get(), this.ps,
+    final TheoryRunner<P, T> qc = TheoryRunner.runner(this.state.get(), this.ps,
         conversion, asString);
     qc.check(property);
   }

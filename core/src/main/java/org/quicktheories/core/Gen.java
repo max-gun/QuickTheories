@@ -12,7 +12,7 @@ import org.quicktheories.api.Function5;
 import org.quicktheories.impl.Constraint;
 
 /**
- * (Psuedo)randomly generates instances of T
+ * (Pseudo)randomly generates instances of T
  *
  * @param <T> Type to generate
  */
@@ -52,8 +52,9 @@ public interface Gen<T> extends AsString<T>{
    * @return a Gen of Optional of T
    */
   default Gen<Optional<T>> toOptionals(int percentEmpty) {
+    Constraint constraint = Constraint.between(0, 100);
     Mod<T,Optional<T>> toOptional = (t,r) -> {
-      boolean empty = r.next(Constraint.between(0, 100)) < percentEmpty;
+      boolean empty = r.next(constraint) < percentEmpty;
       if(empty) {
         return Optional.empty();
       }
@@ -170,14 +171,15 @@ public interface Gen<T> extends AsString<T>{
   
   /**
    * Randomly combines output of this Gen with another. The rhs will be given
-   * a likelyhood of being generated of between 0 (or less) == never, 100 (or more) == always.
+   * a likelihood of being generated of between 0 (or less) == never, 100 (or more) == always.
    * @param rhs Gen to mix with
-   * @param weight Likelyhood of generating from rhs between 0 and 100 
+   * @param weight Likelihood of generating from rhs between 0 and 100
    * @return A Gen of T
    */
   default Gen<T> mix(Gen<T> rhs, int weight) {
+    Constraint constraint = Constraint.between(0, 99);
     return prng -> {
-      long picked = prng.next(Constraint.between(0, 99));
+      long picked = prng.next(constraint);
       if (picked >= weight) {
         return this.generate(prng);
       }
